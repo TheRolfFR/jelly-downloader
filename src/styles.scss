@@ -1,0 +1,17 @@
+:root {
+  font-size: 1.4rem;
+}
+
+html {
+  margin: 0;
+  height: 100%;
+}
+
+html, body, #app {
+  display: flex;
+  flex-direction: column;
+}
+
+body, #app, #main-content {
+  flex-grow: 1;
+}
