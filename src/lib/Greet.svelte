@@ -1,41 +1,38 @@
 <script lang="ts">
   import { invoke } from '@tauri-apps/api/core';
 
-  import { Column, FormGroup, Grid, Row, TextInput } from "carbon-components-svelte";
+  import { TextInput } from "carbon-components-svelte";
   import { Button } from "carbon-components-svelte";
+  // @ts-ignore
+  import Download from "carbon-icons-svelte/lib/Download.svelte";
 
-  let name = "";
-  let greetMsg = ""
+  let url = "";
+  let downloadMsg = ""
 
-  async function greet(){
+  async function download(){
     // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
-    greetMsg = await invoke("greet", { name })
+    downloadMsg = await invoke("download", { url })
   }
 </script>
 
 <div>
-  <form class="row" on:submit|preventDefault={greet}>
-    <Grid>
-      <Row>
-        <Column noGutter><TextInput placeholder="Enter a name..." bind:value={name} /></Column>
-        <Column noGutter class="btnCol"><Button size="field" type="submit" kind="secondary">Greet</Button></Column>
-      </Row>
-    </Grid>
+  <form on:submit|preventDefault={download}>
+    <div id="url-input">
+      <TextInput placeholder="Enter URL" bind:value={url} />
+    </div>
+    <Button size="field" type="submit" kind="primary" icon={Download} />
   </form>
-  <p>{greetMsg}</p>
+  <p>{downloadMsg}</p>
 </div>
 
-<style>
-  :global(#fields > *:first-child) {
-    border: 5px solid red;
-  }
-  :global(.btnCol) {
-    flex-shrink: 1;
-    flex-grow: 0;
-    padding-left: 0.6rem;
-  }
-  :global(.bx--btn--field) {
-    padding-right: 12px;
+<style lang="scss">
+  form {
+    display: flex;
+    gap: 0.6rem;
+
+    #url-input {
+      flex-grow: 1;
+    }
   }
   p:not(:empty) {
     margin-top: 0.6rem;

@@ -4,14 +4,17 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --host 0.0.0.0",
     "build": "vite build",
     "preview": "vite preview",
     "check": "svelte-check --tsconfig ./tsconfig.json",
     "tauri": "tauri"
   },
   "dependencies": {
-    "@tauri-apps/api": "2.0.0-alpha.14"
+    "@tauri-apps/api": "2.0.0-alpha.14",
+    "@tauri-apps/plugin-dialog": "2.0.0-alpha.5",
+    "@tauri-apps/plugin-http": "2.0.0-alpha.6",
+    "carbon-icons-svelte": "^12.4.2"
   },
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^3.0.1",

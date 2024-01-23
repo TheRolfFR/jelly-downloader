@@ -1,7 +1,10 @@
 <script lang="ts">
+  import { listen, type UnlistenFn } from '@tauri-apps/api/event'
   import 'carbon-components-svelte/css/all.css'
-
-  import { Header, HeaderNav, HeaderNavItem, HeaderNavMenu, SideNav, SideNavItems, SideNavMenu, SideNavMenuItem, SideNavLink, SideNavDivider, SkipToContent, Content, Grid, Row, Column, Link, ImageLoader } from 'carbon-components-svelte'
+  import Greet from './lib/Greet.svelte'
+  import { Header, HeaderNav, HeaderNavItem, HeaderNavMenu, SideNav, SideNavItems, SideNavMenu, SideNavMenuItem, SideNavLink, SideNavDivider, SkipToContent, Content, Grid, Row, Column, Link, ImageLoader, Button } from 'carbon-components-svelte'
+  import { onDestroy } from 'svelte'
+  import { invoke } from '@tauri-apps/api/core'
 
   let isSideNavOpen = false
 
@@ -9,7 +12,23 @@
 
   $: document.documentElement.setAttribute('theme', theme)
 
-  import Greet from './lib/Greet.svelte'
+  let unlistener: UnlistenFn | undefined = undefined;
+  
+  listen("DownloadEvent", ({ payload }) => {
+    console.log(payload);
+  })
+  .then(u => {
+    unlistener = u
+  })
+
+  onDestroy(() => {
+    if(unlistener !== undefined)
+      unlistener()
+  })
+
+  function openDialog() {
+    invoke("dialog")
+  }
 </script>
 
 <Header  bind:isSideNavOpen>
@@ -32,7 +51,7 @@
   </HeaderNav>
 </Header>
 
-<SideNav bind:isOpen={isSideNavOpen}>
+<SideNav id="sidenav" bind:isOpen={isSideNavOpen}>
   <SideNavItems>
     <SideNavLink text="Link 1" />
     <SideNavLink text="Link 2" />
@@ -49,35 +68,48 @@
 
 <Content id="main-content">
   <h1>Welcome to Tauri!</h1>
-  <Grid fullWidth noGutter class="grid">
-    <Row id="logos">
-      <Column><ImageLoader style="filter: drop-shadow(0 0 0.7em #747bff)" src="/vite.svg" /></Column>
-      <Column><ImageLoader style="filter: drop-shadow(0 0 0.7em #24c8db)" src="/tauri.svg" /></Column>
-      <Column><ImageLoader style="filter: drop-shadow(0 0 0.7em #ff3e00)" src="/svelte.svg" /></Column>
-      <Column><ImageLoader style="filter: drop-shadow(0 0 0.7em #42AAEA)" src="/carbon.png" /></Column>
-    </Row>
-    <Row>
-      <Column><p>Click on the Tauri, Vite, and Svelte logos to learn more.</p></Column>
-    </Row>
-    <Row>
-      <Column><Greet /></Column>
-    </Row>
-  </Grid>
+  <div id="logos">
+    <div><ImageLoader style="filter: drop-shadow(0 0 var(--drop-shadow-size) #747bff)" src="/vite.svg" /></div>
+    <div><ImageLoader style="filter: drop-shadow(0 0 var(--drop-shadow-size) #24c8db)" src="/tauri.svg" /></div>
+    <div><ImageLoader style="filter: drop-shadow(0 0 var(--drop-shadow-size) #ff3e00)" src="/svelte.svg" /></div>
+    <div><ImageLoader style="filter: drop-shadow(0 0 var(--drop-shadow-size) #42AAEA)" src="/carbon.png" /></div>
+  </div>
+  <div><Greet /></div>
+  <div><Button kind="tertiary" size="small" id="open" on:click={openDialog}>Open dialog</Button></div>
 </Content>
 
 <style lang="scss">
+  :root {
+    --drop-shadow-size: 0.7em;
+  }
+
   :global(#main-content) {
-    align-items: center;
     text-align: center;
     padding: 1.2rem;
+    width: 100vw;
+    overflow: hidden;
 
-    &, & :global(.grid) {
-      display: flex;
-      flex-direction: column;
-      gap: 1.2rem;
+    & > * + * {
+      margin-top: 1.2rem;
     }
+  }
 
-    :global(#logos) {
+  :global(#open) {
+    width: 100%;
+    max-width: none;
+    display: block;
+    padding: 12px;
+    text-align: center;
+  }
+
+  #logos {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: 1fr;
+    gap: 1.2rem;
+
+    & :global(>*) {
+      display: flex;
       align-items: center;
     }
   }
