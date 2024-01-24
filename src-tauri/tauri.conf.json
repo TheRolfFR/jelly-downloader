@@ -35,5 +35,16 @@
       }
     ]
   },
-  "$schema": "https://raw.githubusercontent.com/tauri-apps/tauri/tauri-v2.0.0-alpha.21/core/tauri-config-schema/schema.json"
+  "plugins": {
+    "shell": {
+      "scope": [{
+        "name": "files_access",
+        "cmd": "$DOWNLOAD/not_implemented_yet //TODO https://github.com/tauri-apps/plugins-workspace/issues/595"
+      }]
+    },
+    "fs": {
+      "scope": ["$DOWNLOAD/*"]
+    }
+  },
+  "$schema": "../node_modules/@tauri-apps/cli/schema.json"
 }

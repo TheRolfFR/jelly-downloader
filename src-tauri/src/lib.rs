@@ -6,6 +6,7 @@ use std::sync::Mutex;
 use tauri::{Manager, State};
 use tauri_plugin_dialog;
 use tauri_plugin_dialog::DialogExt;
+use tauri_plugin_shell::ShellExt;
 use uuid::Uuid;
 
 mod downloader_thread;
@@ -33,6 +34,13 @@ fn dialog( app_handle: tauri::AppHandle) {
     })
 }
 
+#[tauri::command]
+fn open(file_path: String, app_handle: tauri::AppHandle) {
+    if let Err(err) = app_handle.shell().open(file_path, None) {
+        dbg!(err);
+    }
+}
+
 struct SenderStorage<T>(Mutex<Sender<T>>);
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
@@ -42,7 +50,7 @@ pub fn run() {
 
     tauri::Builder::default()
         .manage(SenderStorage(Mutex::new(req_schan)) )
-        .invoke_handler(tauri::generate_handler![download, dialog])
+        .invoke_handler(tauri::generate_handler![download, dialog, open])
         .setup(|app| {
             tauri::async_runtime::spawn(async move {
                 downloader_thread(req_rchan, evt_schan ).await
@@ -52,7 +60,6 @@ pub fn run() {
             tauri::async_runtime::spawn(async move {
                 loop {
                     if let Ok(output) = evt_rchan.recv() {
-                        dbg!(&output);
                         app_handle.emit("DownloadEvent", output).ok();
                     }
                 }
@@ -62,6 +69,8 @@ pub fn run() {
         })
         .plugin(tauri_plugin_http::init())
         .plugin(tauri_plugin_dialog::init())
+        .plugin(tauri_plugin_shell::init())
+        .plugin(tauri_plugin_fs::init())
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

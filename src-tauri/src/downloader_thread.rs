@@ -29,15 +29,17 @@ impl Serialize for DownloadEventType {
 pub struct DownloadEvent {
     uuid: String,
     msg: Option<String>,
+    path: Option<String>,
     event: DownloadEventType
 }
 
-pub async fn download_file(req: &DownloadRequest, evt_schan: &Sender<DownloadEvent>) -> Result<(), String> {
+pub async fn download_file(req: &DownloadRequest, evt_schan: &Sender<DownloadEvent>) -> Result<String, String> {
     dbg!(req);
     evt_schan.send(DownloadEvent {
         uuid: req.uuid.clone(),
         msg: None,
-        event: DownloadEventType::Pending
+        event: DownloadEventType::Pending,
+        path: None
     }).map_err(|e| e.to_string())?;
 
     let res = reqwest::get(&req.url).await.map_err(|e| e.to_string())?;
@@ -54,6 +56,7 @@ pub async fn download_file(req: &DownloadRequest, evt_schan: &Sender<DownloadEve
     fs::create_dir_all(&req.out).map_err(|e| e.to_string())?;
 
     let out_file = req.out.as_path().join(filename);
+    let out_file_string = (&out_file).to_string_lossy().into_owned();
     dbg!(&out_file);
 
     let total_size = res.content_length().unwrap_or_default() as usize;
@@ -72,29 +75,30 @@ pub async fn download_file(req: &DownloadRequest, evt_schan: &Sender<DownloadEve
         evt_schan.send(DownloadEvent {
             uuid: req.uuid.clone(),
             msg: None,
-            event: DownloadEventType::Downloading(downloaded, total_size)
+            event: DownloadEventType::Downloading(downloaded, total_size),
+            path: Some(out_file_string.clone()),
         }).map_err(|e| e.to_string())?;
     }
 
     file.flush().map_err(|e| e.to_string())?;
 
-    return Ok(());
+    return Ok(out_file_string);
 }
 
 pub async fn downloader_thread(req_rchan: Receiver<DownloadRequest>, evt_schan: Sender<DownloadEvent>) -> ()
 {
     loop {
         if let Ok(req) = req_rchan.recv() {
-            let (event, msg) = if let Err(err) = download_file(&req, &evt_schan).await {
-                (DownloadEventType::Error, Some(err))
-            } else {
-                (DownloadEventType::Done, None)
+           let (event, msg, path) = match download_file(&req, &evt_schan).await {
+                Ok(out_file) => (DownloadEventType::Done, None, Some(out_file)),
+                Err(err) => (DownloadEventType::Error, Some(err), None),
             };
 
             evt_schan.send(DownloadEvent {
                 uuid: req.uuid,
                 event,
-                msg
+                msg,
+                path,
             }).ok();
         }
     }
