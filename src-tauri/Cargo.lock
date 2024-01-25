@@ -1776,6 +1776,7 @@ dependencies = [
  "tauri-plugin-dialog",
  "tauri-plugin-fs",
  "tauri-plugin-http",
+ "tauri-plugin-openfile",
  "tauri-plugin-shell",
  "uuid",
 ]
@@ -3545,6 +3546,16 @@ dependencies = [
  "tauri-plugin-fs",
  "thiserror",
  "url",
+]
+
+[[package]]
+name = "tauri-plugin-openfile"
+version = "0.0.0"
+dependencies = [
+ "serde",
+ "tauri",
+ "tauri-build",
+ "thiserror",
 ]
 
 [[package]]

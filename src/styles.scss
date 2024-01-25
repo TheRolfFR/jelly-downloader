@@ -1,5 +1,15 @@
-:root {
-  font-size: 1.4rem;
+* {
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+	outline: none;
+}
+
+input, textarea {
+	outline: none;
+	-moz-resize: none;
+	resize: none;
+	font-family: inherit;
 }
 
 html {
@@ -16,33 +26,8 @@ body, #app, #main-content {
   flex-grow: 1;
 }
 
-nav {
-  margin-left: -1px !important;
-  position: fixed;
-  transition: width .2s ease-in-out, transform .2s ease-in-out !important;
+#app {
+	:global(> *:first-child) {
+		position: relative;
+	}
 }
-
-.bx--header__action {
-  -webkit-touch-callout: none !important;
-  -webkit-user-select: none !important;
-  -moz-user-select: none !important;
-  -ms-user-select: none !important;
-  user-select: none !important;
-}
-
-.bx--header__action, .bx--header__action:hover, .bx--header__action:focus {
-	outline: none !important;
-}
-
-.bx--header__action:focus {
-  border-color: transparent !important;
-}
-.bx--header__action:hover {
-  background-color: transparent !important;
-}
-
-@media (max-width: 1056px) {
-  .bx--side-nav.bx--side-nav--expanded ~ .bx--content {
-    margin-left: 0rem !important;
-  }
-  }

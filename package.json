@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite --host 0.0.0.0",
+    "dev": "vite --host 192.168.0.11",
     "build": "vite build",
     "preview": "vite preview",
     "check": "svelte-check --tsconfig ./tsconfig.json",
@@ -14,16 +14,23 @@
     "@tauri-apps/api": "2.0.0-alpha.14",
     "@tauri-apps/plugin-dialog": "2.0.0-alpha.5",
     "@tauri-apps/plugin-http": "2.0.0-alpha.6",
-    "carbon-icons-svelte": "^12.4.2"
+    "carbon-icons-svelte": "^12.4.2",
+    "flowbite-svelte-icons": "^1.0.2"
   },
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^3.0.1",
     "@tauri-apps/cli": "2.0.0-alpha.21",
     "@tsconfig/svelte": "^5.0.2",
+    "autoprefixer": "^10.4.16",
     "carbon-components-svelte": "^0.82.8",
+    "flowbite": "^2.2.1",
+    "flowbite-svelte": "^0.44.22",
+    "postcss": "^8.4.32",
+    "postcss-load-config": "^5.0.2",
     "sass": "^1.70.0",
     "svelte": "^4.2.8",
     "svelte-check": "^3.4.6",
+    "tailwindcss": "^3.3.6",
     "tslib": "^2.6.0",
     "typescript": "^5.0.2",
     "vite": "^5.0.0"

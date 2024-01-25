@@ -6,8 +6,11 @@ use std::sync::Mutex;
 use tauri::{Manager, State};
 use tauri_plugin_dialog;
 use tauri_plugin_dialog::DialogExt;
-use tauri_plugin_shell::ShellExt;
+use tauri_plugin_openfile::{OpenFileRequest, OpenfileExt};
 use uuid::Uuid;
+
+#[cfg(desktop)]
+use tauri_plugin_shell::ShellExt;
 
 mod downloader_thread;
 pub use downloader_thread::*;
@@ -36,8 +39,19 @@ fn dialog( app_handle: tauri::AppHandle) {
 
 #[tauri::command]
 fn open(file_path: String, app_handle: tauri::AppHandle) {
-    if let Err(err) = app_handle.shell().open(file_path, None) {
-        dbg!(err);
+    #[cfg(desktop)]
+    {
+        if let Err(err) = app_handle.shell().open(file_path.clone(), None) {
+            dbg!(err);
+        }
+    }
+    #[cfg(mobile)]
+    {
+        if let Err(err) = app_handle.openfile().open_file(OpenFileRequest {
+            path: file_path
+        }) {
+            dbg!(err);
+        }
     }
 }
 
@@ -71,6 +85,7 @@ pub fn run() {
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_shell::init())
         .plugin(tauri_plugin_fs::init())
+        .plugin(tauri_plugin_openfile::init())
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
