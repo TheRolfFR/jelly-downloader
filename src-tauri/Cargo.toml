@@ -23,6 +23,8 @@ tauri-plugin-http = "2.0.0-alpha.9"
 tauri-plugin-shell = "2.0.0-alpha.3"
 tauri-plugin-fs = "2.0.0-alpha.7"
 tauri-plugin-openfile = { path = "../../tauri-plugin-openfile" }
+filetime = "0.2.23"
+ts-rs = { version = "7.1.1", features = ["no-serde-warnings"] }
 
 [features]
 # this feature is used for production builds or when `devPath` points to the filesystem

@@ -3,7 +3,12 @@
     "composite": true,
     "skipLibCheck": true,
     "module": "ESNext",
-    "moduleResolution": "bundler"
+    "moduleResolution": "bundler",
+    "paths": {
+        "$bindings": [
+            "./src-tauri/bindings"
+        ]
+    }
   },
   "include": ["vite.config.ts"]
 }

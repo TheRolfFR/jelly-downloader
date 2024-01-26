@@ -1,7 +1,7 @@
 {
   "build": {
     "beforeDevCommand": "pnpm dev",
-    "beforeBuildCommand": "pnpm build",
+    "beforeBuildCommand": "pnpm run bindings && pnpm build",
     "devPath": "http://127.0.0.1:1420",
     "distDir": "../dist"
   },
@@ -30,8 +30,8 @@
         "fullscreen": false,
         "resizable": true,
         "title": "jelly-downloader",
-        "width": 800,
-        "height": 600
+        "width": 425,
+        "height": 755
       }
     ]
   },
