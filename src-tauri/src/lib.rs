@@ -13,6 +13,8 @@ use uuid::Uuid;
 
 #[cfg(mobile)]
 use tauri_plugin_openfile::{OpenFileRequest, OpenfileExt};
+#[cfg(mobile)]
+use tauri_plugin_openfile::OpenUrlRequest;
 #[cfg(desktop)]
 use tauri_plugin_shell::ShellExt;
 
@@ -98,6 +100,24 @@ fn open(file_path: String, app_handle: tauri::AppHandle) {
     }
 }
 
+#[tauri::command]
+fn open_url(url: String, app_handle: tauri::AppHandle) {
+    #[cfg(desktop)]
+    {
+        if let Err(err) = app_handle.shell().open(url.clone(), None) {
+            dbg!(err);
+        }
+    }
+    #[cfg(mobile)]
+    {
+        if let Err(err) = app_handle.openfile().open_url(OpenUrlRequest {
+            url
+        }) {
+            dbg!(err);
+        }
+    }
+}
+
 struct SenderStorage<T>(Mutex<Sender<T>>);
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
@@ -108,7 +128,7 @@ pub fn run() {
     tauri::Builder::default()
         .manage(SenderStorage(Mutex::new(req_schan)) )
         .manage(SenderStorage(Mutex::new(evt_schan.clone())))
-        .invoke_handler(tauri::generate_handler![download, dialog, open, read_dir])
+        .invoke_handler(tauri::generate_handler![download, dialog, open, read_dir, open_url])
         .setup(|app| {
             tauri::async_runtime::spawn(async move {
                 downloader_thread(req_rchan, evt_schan ).await

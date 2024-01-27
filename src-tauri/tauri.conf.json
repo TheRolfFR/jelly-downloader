@@ -31,7 +31,8 @@
         "resizable": true,
         "title": "jelly-downloader",
         "width": 425,
-        "height": 755
+        "height": 755,
+        "theme": "Dark"
       }
     ]
   },

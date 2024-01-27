@@ -1,17 +1,23 @@
 <script lang="ts">
   import { BottomNav, BottomNavItem, Heading, P, Secondary } from 'flowbite-svelte'
-  import { HomeSolid, DownloadSolid, AdjustmentsVerticalOutline } from 'flowbite-svelte-icons'
+  import { HomeSolid, DownloadSolid, AdjustmentsVerticalOutline, ArrowUpRightSquareSolid } from 'flowbite-svelte-icons'
 
   import DownloadForm from './lib/DownloadForm.svelte'
   import DownloadList from './lib/DownloadList.svelte'
+  import { invoke } from '@tauri-apps/api/core'
 
   let activeUrl = '#'
 </script>
 
-<div id="main-content">
+<div id="main-content" class="!text-white dark:text-white">
   <div>
-    <Heading tag="h4">FileDownloader</Heading>
-    <Heading tag="h5"><Secondary>by TheRolf</Secondary></Heading>
+    <Heading tag="h3">FileDownloader</Heading>
+    <!-- svelte-ignore a11y-click-events-have-key-events -->
+    <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
+    <Heading tag="h5"><Secondary class="!text-white" on:click={() => invoke("open_url", { url: "https://therolf.fr" })}>by
+      <img id="therolf" src="/the_rolf_no_bg.png" alt="TheRolf" />
+      <ArrowUpRightSquareSolid class="w-3 h-3 mb-1" />
+    </Secondary></Heading>
   </div>
   <div id="techstack">
     <Heading tag="h5">Made with</Heading>
@@ -50,6 +56,14 @@
 
   :global(#nav a, #nav a span) {
     color: inherit !important;
+  }
+
+  #therolf {
+    height: 1.4rem;
+
+    &, & :global(+*) {
+      display: inline;
+    }
   }
 
   $app_margin: 1.2rem;

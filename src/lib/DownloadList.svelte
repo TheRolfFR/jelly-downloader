@@ -100,7 +100,13 @@
         <div class="flex-grow">
           {download.path ? fileName(download.path) : download.uuid}
           <div class="details flex items-center gap-1">
-            <Badge class="bg-neutral-800">{humanFileSize(download.downloaded)}</Badge>
+            <Badge class="bg-neutral-800">
+              {#if download.event == 'downloading' && download.total_size != null }
+                {humanFileSize(download.downloaded)}/{humanFileSize(download.total_size)}
+              {:else}
+                {humanFileSize(download.downloaded)}
+              {/if}
+            </Badge>
             {#if download.event == 'done'}
               <Badge color="green"><CheckOutline class="h-2.5 w-2.5 me-1" />Done</Badge>
             {:else if download.event == 'downloading'}
